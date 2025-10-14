@@ -1,0 +1,187 @@
+:root {
+    --primary-color: #4CAF50;
+    --secondary-color: #fff;
+    --background-color: #f4f4f4;
+    --chat-background-color: #fff;
+    --user-message-bg: #DCF8C6;
+    --bot-message-bg: #f1f0f0;
+    --text-color: #000;
+}
+
+body {
+    font-family: sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+#language-selection {
+    text-align: center;
+}
+
+#language-selection h2 {
+    margin-bottom: 20px;
+}
+
+#language-selection button {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 0 10px;
+}
+
+.chat-container {
+    width: 400px;
+    height: 600px;
+    background-color: var(--chat-background-color);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-header {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    padding: 20px;
+    text-align: center;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.settings {
+    position: relative;
+}
+
+#settings-icon {
+    cursor: pointer;
+}
+
+.theme-selector {
+    position: absolute;
+    top: 30px;
+    right: 0;
+    background-color: var(--chat-background-color);
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 5px;
+    display: flex;
+}
+
+.theme-option {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin: 0 5px;
+    cursor: pointer;
+}
+
+.chat-box {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.chat-message {
+    margin-bottom: 15px;
+}
+
+.user-message p {
+    background-color: var(--user-message-bg);
+    color: #000;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: right;
+}
+
+.bot-message p {
+    background-color: var(--bot-message-bg);
+    color: #000;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.chat-input {
+    display: flex;
+    padding: 20px;
+    border-top: 1px solid #ddd;
+    background-color: var(--chat-background-color);
+}
+
+#user-input {
+    flex-grow: 1;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+}
+
+#send-btn {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+/* --- Themes --- */
+
+body[data-theme="dark-blue"] {
+    --primary-color: #2196F3;
+    --background-color: #1a1a2e;
+    --chat-background-color: #2c2c54;
+    --text-color: #fff;
+    --user-message-bg: #2196F3;
+    --bot-message-bg: #474787;
+}
+
+body[data-theme="dark-green"] {
+    --primary-color: #4CAF50;
+    --background-color: #1b262c;
+    --chat-background-color: #0f4c75;
+    --text-color: #bbe1fa;
+    --user-message-bg: #3282b8;
+    --bot-message-bg: #1b262c;
+}
+
+body[data-theme="dark-purple"] {
+    --primary-color: #9C27B0;
+    --background-color: #1d1b26;
+    --chat-background-color: #4c4a78;
+    --text-color: #fff;
+    --user-message-bg: #6a4c9c;
+    --bot-message-bg: #3d3b63;
+}
+
+body[data-theme="dark-red"] {
+    --primary-color: #f44336;
+    --background-color: #2c1b1b;
+    --chat-background-color: #5a3e3e;
+    --text-color: #fff;
+    --user-message-bg: #b9524a;
+    --bot-message-bg: #4a3131;
+}
+
+body[data-theme] .user-message p,
+body[data-theme] .bot-message p {
+    color: #fff;
+}
+
+.theme-option[data-theme="dark-blue"] { background-color: #2196F3; }
+.theme-option[data-theme="dark-green"] { background-color: #4CAF50; }
+.theme-option[data-theme="dark-purple"] { background-color: #9C27B0; }
+.theme-option[data-theme="dark-red"] { background-color: #f44336; }
