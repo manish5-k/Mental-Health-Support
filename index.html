@@ -18,6 +18,10 @@
     <div class="chat-container" style="display: none;">
         <div class="chat-header">
             <h2>Mental Health Companion</h2>
+            <div class="tabs">
+                <div class="tab" id="chat-tab">Chat</div>
+                <div class="tab" id="history-tab">History</div>
+            </div>
             <div class="settings">
                 <i class="fas fa-cog" id="settings-icon"></i>
                 <div class="theme-selector" style="display: none;">
@@ -27,14 +31,19 @@
                     <div class="theme-option" data-theme="dark-red"></div>
                 </div>
             </div>
+            <div class="logout">
+                <a href="/logout" id="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </div>
         </div>
         <div class="chat-box" id="chat-box">
-            </div>
+        </div>
+        <div id="history-container" style="display: none;"></div>
         <div class="chat-input">
             <input type="text" id="user-input" placeholder="Type your message here...">
             <button id="send-btn">Send</button>
         </div>
     </div>
     <script src="script.js"></script>
+    <script src="history.js"></script>
 </body>
 </html>
