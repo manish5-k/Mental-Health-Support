@@ -5,12 +5,54 @@ document.addEventListener('DOMContentLoaded', () => {
     const langHiBtn = document.getElementById('lang-hi');
     const userInput = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');
+    const micBtn = document.getElementById('mic-btn');
     const chatBox = document.getElementById('chat-box');
     const settingsIcon = document.getElementById('settings-icon');
     const themeSelector = document.querySelector('.theme-selector');
     const themeOptions = document.querySelectorAll('.theme-option');
 
     let currentLanguage = 'en';
+    let recognition;
+    let isRecording = false;
+
+    // Speech Recognition
+    if ('webkitSpeechRecognition' in window) {
+        recognition = new webkitSpeechRecognition();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        recognition.onstart = () => {
+            isRecording = true;
+            micBtn.classList.add('recording');
+        };
+
+        recognition.onend = () => {
+            isRecording = false;
+            micBtn.classList.remove('recording');
+        };
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            userInput.value = transcript;
+            sendMessage();
+        };
+
+        recognition.onerror = (event) => {
+            console.error('Speech recognition error:', event.error);
+        };
+    } else {
+        micBtn.style.display = 'none';
+        console.warn('Speech recognition not supported in this browser.');
+    }
+
+    micBtn.addEventListener('click', () => {
+        if (isRecording) {
+            recognition.stop();
+        } else {
+            recognition.lang = currentLanguage === 'hi' ? 'hi-IN' : 'en-US';
+            recognition.start();
+        }
+    });
 
     langEnBtn.addEventListener('click', () => setLanguage('en'));
     langHiBtn.addEventListener('click', () => setLanguage('hi'));
@@ -21,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         chatContainer.style.display = 'flex';
         const welcomeMessage = lang === 'en' ? 'Hello! I\'m here to listen. How are you feeling today?' : 'Namaste! Main yahan sunne ke liye hoon. Aap kaisa mehsoos kar rahe hain?';
         appendMessage(welcomeMessage, 'bot');
+        speak(welcomeMessage);
     }
 
     sendBtn.addEventListener('click', sendMessage);
@@ -57,10 +100,13 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             appendMessage(data.response, 'bot');
+            speak(data.response);
         })
         .catch(error => {
             console.error('Error:', error);
-            appendMessage('Sorry, something went wrong. Please try again later.', 'bot');
+            const errorMessage = 'Sorry, something went wrong. Please try again later.';
+            appendMessage(errorMessage, 'bot');
+            speak(errorMessage);
         });
     }
 
@@ -72,5 +118,11 @@ document.addEventListener('DOMContentLoaded', () => {
         messageElement.appendChild(p);
         chatBox.appendChild(messageElement);
         chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function speak(text) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = currentLanguage === 'hi' ? 'hi-IN' : 'en-US';
+        speechSynthesis.speak(utterance);
     }
 });
