@@ -40,8 +40,14 @@
         <div id="history-container" style="display: none;"></div>
         <div class="chat-input">
             <input type="text" id="user-input" placeholder="Type your message here...">
+            <button id="image-btn"><i class="fas fa-camera"></i></button>
+            <input type="file" id="image-input" style="display: none;" accept="image/*">
             <button id="send-btn">Send</button>
             <button id="mic-btn"><i class="fas fa-microphone"></i></button>
+        </div>
+        <div id="image-preview-container" style="display: none;">
+            <img id="image-preview" src="" alt="Image Preview">
+            <button id="remove-image-btn"><i class="fas fa-times"></i></button>
         </div>
     </div>
     <script src="script.js"></script>

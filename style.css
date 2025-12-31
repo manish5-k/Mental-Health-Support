@@ -1,7 +1,7 @@
 :root {
     --primary-color: #4CAF50;
     --secondary-color: #fff;
-    --background-color: #f4f4f4;
+    --background-color: #e0f2f7; /* Light blue-green */
     --chat-background-color: #fff;
     --user-message-bg: #DCF8C6;
     --bot-message-bg: #f1f0f0;
@@ -10,8 +10,9 @@
 
 body {
     font-family: sans-serif;
-    background-color: var(--background-color); 
-    color: var(--text-color); display: flex;
+    background: linear-gradient(to right, #e0f2f7, #c8e6c9); /* Light gradient */
+    color: var(--text-color); 
+    display: flex;
     justify-content: center; 
     align-items: center; 
     height: 100vh; 

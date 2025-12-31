@@ -15,12 +15,19 @@ MODEL = "models/gemini-2.5-flash"
 API_KEY = "AIzaSyAkLfXbgOoWwRloyyN-VvM0NY4cx4JgeN0"
 API_URL = f"https://generativelanguage.googleapis.com/v1/{MODEL}:generateContent?key={API_KEY}"
 
-def generate_ai_response(user_message, language='en'):
+def generate_ai_response(user_message, language='en', image_data=None):
     try:
+        study_keywords = ["study", "padhai", "exam", "assignment", "homework"]
+        is_study_related = any(keyword in user_message.lower() for keyword in study_keywords)
+
         if language == 'hi':
             prompt = (
                 "You are a caring friend. Respond in Hinglish (Hindi + English) with empathy.\n"
                 "If the user mentions stress, headache, or similar issues, you can suggest potential medicines and other coping methods.\n"
+            )
+            if is_study_related:
+                prompt += "The user is asking about studying. Provide study tips, motivation, and a positive outlook.\n"
+            prompt += (
                 "IMPORTANT: Always include this disclaimer if you suggest any medicine or treatment: 'Please consult a doctor or a qualified medical professional before taking any medication or trying any new treatment.'\n"
                 f"User: {user_message}"
             )
@@ -28,17 +35,36 @@ def generate_ai_response(user_message, language='en'):
             prompt = (
                 "You are a caring mental health assistant. Respond with kindness and emotional safety.\n"
                 "If the user mentions stress, headache, or similar issues, you can suggest potential medicines and other coping methods.\n"
+            )
+            if is_study_related:
+                prompt += "The user is asking about studying. Provide study tips, motivation, and a positive outlook.\n"
+            prompt += (
                 "IMPORTANT: Always include this disclaimer if you suggest any medicine or treatment: 'Please consult a doctor or a qualified medical professional before taking any medication or trying any new treatment.'\n"
                 f"User: {user_message}"
             )
 
+        parts = [{"text": prompt}]
+        model = "gemini-1.0-pro"
+        if image_data:
+            model = "gemini-pro-vision"
+            mime_type, image_base64 = image_data.split(';base64,')
+            mime_type = mime_type.split(':')[1]
+            parts.append({
+                "inline_data": {
+                    "mime_type": mime_type,
+                    "data": image_base64
+                }
+            })
+
         payload = {
             "contents": [
                 {
-                    "parts": [{"text": prompt}]
+                    "parts": parts
                 }
             ]
         }
+        
+        API_URL = f"https://generativelanguage.googleapis.com/v1/models/{model}:generateContent?key={API_KEY}"
 
         response = requests.post(API_URL, json=payload)
         data = response.json()
@@ -121,8 +147,9 @@ def chat():
     user_id = session['user_id']
     user_message = request.json.get("message", "")
     language = request.json.get("language", "en")
+    image_data = request.json.get("image", None)
 
-    reply = generate_ai_response(user_message, language)
+    reply = generate_ai_response(user_message, language, image_data)
     
     save_chat_message(user_id, user_message, reply)
 

@@ -11,9 +11,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeSelector = document.querySelector('.theme-selector');
     const themeOptions = document.querySelectorAll('.theme-option');
 
+    const imageBtn = document.getElementById('image-btn');
+    const imageInput = document.getElementById('image-input');
+    const imagePreviewContainer = document.getElementById('image-preview-container');
+    const imagePreview = document.getElementById('image-preview');
+    const removeImageBtn = document.getElementById('remove-image-btn');
+
     let currentLanguage = 'en';
     let recognition;
     let isRecording = false;
+    let imageBase64 = null;
 
     // Speech Recognition
     if ('webkitSpeechRecognition' in window) {
@@ -57,6 +64,30 @@ document.addEventListener('DOMContentLoaded', () => {
     langEnBtn.addEventListener('click', () => setLanguage('en'));
     langHiBtn.addEventListener('click', () => setLanguage('hi'));
 
+    imageBtn.addEventListener('click', () => {
+        imageInput.click();
+    });
+
+    imageInput.addEventListener('change', () => {
+        const file = imageInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                imageBase64 = reader.result;
+                imagePreview.src = imageBase64;
+                imagePreviewContainer.style.display = 'flex';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    removeImageBtn.addEventListener('click', () => {
+        imageBase64 = null;
+        imagePreview.src = '';
+        imagePreviewContainer.style.display = 'none';
+        imageInput.value = '';
+    });
+
     function setLanguage(lang) {
         currentLanguage = lang;
         languageSelection.style.display = 'none';
@@ -85,17 +116,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function sendMessage() {
         const message = userInput.value.trim();
-        if (message === '') return;
+        if (message === '' && !imageBase64) return;
 
-        appendMessage(message, 'user');
+        appendMessage(message, 'user', imageBase64);
         userInput.value = '';
+
+        const payload = {
+            message,
+            language: currentLanguage
+        };
+
+        if (imageBase64) {
+            payload.image = imageBase64;
+        }
 
         fetch('/chat', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ message, language: currentLanguage })
+            body: JSON.stringify(payload)
         })
         .then(response => response.json())
         .then(data => {
@@ -108,18 +148,34 @@ document.addEventListener('DOMContentLoaded', () => {
             appendMessage(errorMessage, 'bot');
             speak(errorMessage);
         });
+
+        if (imageBase64) {
+            removeImageBtn.click();
+        }
     }
 
-    function appendMessage(message, sender) {
+    function appendMessage(message, sender, image = null) {
         const messageElement = document.createElement('div');
         messageElement.classList.add('chat-message', `${sender}-message`);
-        const p = document.createElement('p');
-        p.textContent = message;
-        messageElement.appendChild(p);
+
+        if (image) {
+            const img = document.createElement('img');
+            img.src = image;
+            img.style.maxWidth = '200px';
+            img.style.borderRadius = '10px';
+            messageElement.appendChild(img);
+        }
+
+        if (message) {
+            const p = document.createElement('p');
+            p.textContent = message;
+            messageElement.appendChild(p);
+        }
+        
         chatBox.appendChild(messageElement);
         chatBox.scrollTop = chatBox.scrollHeight;
     }
-
+    
     function speak(text) {
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = currentLanguage === 'hi' ? 'hi-IN' : 'en-US';
